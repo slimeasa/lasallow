@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chicago Roleplay — Allow-List</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --yellow: #f5c500;
+      --bg: #0c111a;
+      --navy: #0f1623;
+      --border: rgba(255,255,255,0.06);
+      --text: #cbd5e1;
+      --muted: #3d4a5c;
+      --muted2: #6b7a8d;
+      --red: #f87171;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; font-weight: 300; min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; }
+    ::selection { background: var(--yellow); color: #000; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--navy); }
+    ::-webkit-scrollbar-thumb { background: var(--yellow); border-radius: 3px; }
+
+    /* TOPBAR */
+    .topbar { width: 100%; background: var(--navy); border-bottom: 2px solid var(--yellow); padding: 0 32px; height: 58px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 100; }
+    .logo-box { background: var(--yellow); border-radius: 7px; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 13px; color: var(--navy); font-family: 'Arial Black', sans-serif; box-shadow: 0 0 14px rgba(245,197,0,.35); flex-shrink: 0; }
+    .logo-title { font-family: 'Arial Black', sans-serif; font-size: 15px; font-weight: 900; letter-spacing: 3px; color: var(--yellow); line-height: 1.1; }
+    .logo-sub { color: rgba(255,255,255,.3); font-weight: 400; font-size: 10px; letter-spacing: 2px; font-family: sans-serif; }
+    .logo-tag { font-size: 7px; letter-spacing: 4px; color: var(--muted); }
+    .topbar-line { flex: 1; height: 1px; background: linear-gradient(90deg, rgba(245,197,0,.3), transparent); }
+
+    /* HERO */
+    .hero { position: relative; min-height: 88vh; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; padding: 2rem; text-align: center; }
+    .hero-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(245,197,0,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(245,197,0,.06) 1px,transparent 1px); background-size: 55px 55px; animation: gridPan 18s linear infinite; mask-image: radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%); -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%,black 30%,transparent 100%); }
+    @keyframes gridPan { to { transform: translateY(55px); } }
+    .hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 55% 40% at 50% 60%,rgba(245,197,0,.1) 0%,transparent 70%); pointer-events: none; }
+    .hero-content { position: relative; z-index: 2; animation: fadeUp .9s ease both; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
+    .title { display: flex; flex-direction: column; line-height: .88; margin-bottom: 1.4rem; }
+    .t1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(5rem,18vw,12rem); letter-spacing: .05em; color: #fff; }
+    .t2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(5rem,18vw,12rem); letter-spacing: .05em; color: var(--yellow); text-shadow: 0 0 60px rgba(245,197,0,.35); }
+    .subtitle { font-size: clamp(.9rem,2vw,1.1rem); color: var(--muted2); line-height: 1.75; max-width: 480px; margin: 0 auto 2.5rem; }
+    .stats { display: flex; align-items: center; justify-content: center; gap: 1.5rem; }
+    .stat { display: flex; flex-direction: column; align-items: center; gap: .15rem; }
+    .stat span { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--yellow); }
+    .stat small { font-size: .65rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+    .stat-div { width: 1px; height: 38px; background: var(--border); }
+    .scroll-hint { position: absolute; bottom: 1.8rem; left: 50%; transform: translateX(-50%); color: var(--muted); font-size: .9rem; animation: bounce 2s ease infinite; }
+    @keyframes bounce { 0%,100% { transform:translateX(-50%) translateY(0); } 50% { transform:translateX(-50%) translateY(7px); } }
+
+    /* INFO STRIP */
+    .info-strip { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--navy); }
+    .info-item { display: flex; align-items: center; gap: .55rem; padding: .9rem 2.5rem; font-size: .85rem; color: var(--muted2); border-right: 1px solid var(--border); }
+    .info-item:last-child { border-right: none; }
+    .info-item strong { color: var(--text); font-weight: 600; }
+
+    /* MAIN */
+    main { flex: 1; display: flex; align-items: flex-start; justify-content: center; padding: 5rem 1.5rem; }
+    .form-wrap { width: 100%; max-width: 700px; }
+    .form-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 3rem; }
+    .form-header h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: .12em; color: var(--yellow); white-space: nowrap; }
+    .fh-line { flex: 1; height: 1px; background: linear-gradient(90deg,rgba(245,197,0,.3),transparent); }
+    form { display: flex; flex-direction: column; gap: 2rem; }
+    .field { display: flex; flex-direction: column; gap: .5rem; }
+    label { font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: var(--yellow); font-weight: 600; }
+    .req { color: var(--red); margin-left: 3px; }
+    input[type=text], input[type=number], textarea { width: 100%; background: var(--navy); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: 'Barlow', sans-serif; font-size: .95rem; font-weight: 300; padding: .85rem 1rem; outline: none; transition: border-color .2s,box-shadow .2s; resize: none; }
+    input[type=text]::placeholder, input[type=number]::placeholder, textarea::placeholder { color: var(--muted); }
+    input[type=text]:focus, input[type=number]:focus, textarea:focus { border-color: rgba(245,197,0,.5); box-shadow: 0 0 0 3px rgba(245,197,0,.07); }
+    textarea { min-height: 120px; }
+
+    /* CHATLOG */
+    .chatlog-block { display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: var(--navy); }
+    .scene-wrap { position: relative; width: 100%; overflow: hidden; }
+    .scene-wrap img { width: 100%; display: block; object-fit: cover; max-height: 280px; }
+    .scene-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent,rgba(12,17,26,.92)); padding: 1.5rem 1rem .7rem; }
+    .scene-overlay span { font-size: .72rem; letter-spacing: .14em; color: var(--yellow); text-transform: uppercase; }
+    .legend { display: flex; flex-wrap: wrap; gap: .5rem; padding: .6rem 1rem; border-bottom: 1px solid var(--border); }
+    .leg-item { display: flex; align-items: center; gap: .4rem; }
+    .leg-badge { font-family: 'Share Tech Mono', monospace; font-size: 10px; font-weight: 700; border: 1px solid; border-radius: 4px; padding: 1px 6px; min-width: 20px; text-align: center; }
+    .leg-label { font-size: .7rem; color: var(--muted2); }
+    .chatlog-ta { width: 100%; background: transparent; border: none; color: #c8d0dc; font-family: 'Courier New', monospace; font-size: 12.5px; line-height: 1.75; padding: .85rem 1rem; outline: none; resize: vertical; min-height: 200px; }
+    .chatlog-ta::placeholder { color: var(--muted); }
+
+    /* ERROR / SUBMIT */
+    .error-box { background: rgba(248,113,113,.1); border: 1px solid rgba(248,113,113,.25); border-radius: 6px; color: var(--red); font-size: .86rem; padding: .7rem 1rem; display: none; }
+    .error-box.show { display: block; }
+    .submit-btn { background: var(--yellow); color: var(--navy); border: none; border-radius: 6px; font-family: 'Arial Black', sans-serif; font-size: 1rem; letter-spacing: .12em; font-weight: 900; padding: .95rem 2rem; cursor: pointer; height: 52px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background .2s,transform .15s,box-shadow .2s; box-shadow: 0 3px 20px rgba(245,197,0,.3); }
+    .submit-btn:hover:not(:disabled) { background: #ffd83d; transform: translateY(-1px); }
+    .submit-btn:disabled { opacity: .55; cursor: not-allowed; }
+    .loader { width: 20px; height: 20px; border: 2px solid rgba(0,0,0,.2); border-top-color: #000; border-radius: 50%; animation: spin .7s linear infinite; display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* SUCCESS */
+    .success-box { display: none; flex-direction: column; align-items: center; text-align: center; gap: 1rem; padding: 4rem 2rem; border: 1px solid rgba(245,197,0,.2); border-radius: 8px; background: rgba(245,197,0,.04); }
+    .success-box.show { display: flex; animation: fadeUp .6s ease; }
+    .success-icon { width: 64px; height: 64px; border: 2px solid var(--yellow); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--yellow); }
+    .success-box h3 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--yellow); }
+    .success-box p { color: var(--muted2); max-width: 400px; line-height: 1.7; }
+    .success-box p strong { color: var(--text); }
+    .reset-btn { margin-top: 1rem; background: transparent; border: 1px solid var(--border); color: var(--muted2); font-family: 'Barlow', sans-serif; font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; padding: .55rem 1.4rem; cursor: pointer; border-radius: 5px; transition: border-color .2s,color .2s; }
+    .reset-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--border); background: var(--navy); padding: 1.5rem; text-align: center; display: flex; flex-direction: column; gap: .25rem; margin-top: auto; }
+    footer p { font-size: .78rem; color: var(--muted); }
+    .footer-mono { font-family: 'Share Tech Mono', monospace; font-size: .68rem !important; letter-spacing: .2em; }
+
+    @media (max-width: 600px) {
+      .info-strip { flex-direction: column; }
+      .info-item { border-right: none; border-bottom: 1px solid var(--border); width: 100%; justify-content: center; }
+      .info-item:last-child { border-bottom: none; }
+      .form-header { flex-direction: column; text-align: center; }
+      .fh-line { width: 80px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="logo-box">CT</div>
+      <div>
+        <div class="logo-title">CHICAGO <span class="logo-sub">Tools RP</span></div>
+        <div class="logo-tag">ALLOW-LIST SYSTEM</div>
+      </div>
+    </div>
+    <div class="topbar-line"></div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="title">
+        <span class="t1">CHICAGO</span>
+        <span class="t2">ROLEPLAY</span>
+      </div>
+      <p class="subtitle">A cidade nunca dorme — e nem suas ambições.<br>Solicite sua vaga e faça parte da história.</p>
+      <div class="stats">
+        <div class="stat"><span>800+</span><small>Membros</small></div>
+        <div class="stat-div"></div>
+        <div class="stat"><span>24/7</span><small>Online</small></div>
+        <div class="stat-div"></div>
+        <div class="stat"><span>RP</span><small>Sério</small></div>
+      </div>
+    </div>
+    <div class="scroll-hint">▼</div>
+  </section>
+
+  <div class="info-strip">
+    <div class="info-item">⚠️ Idade mínima: <strong>16 anos</strong></div>
+    <div class="info-item">⏱️ Análise em até: <strong>48 horas</strong></div>
+    <div class="info-item">📋 Leia as <strong>regras do servidor</strong></div>
+  </div>
+
+  <main>
+    <div class="form-wrap">
+      <div class="form-header">
+        <div class="fh-line"></div>
+        <h2>FORMULÁRIO DE ALLOW-LIST</h2>
+        <div class="fh-line"></div>
+      </div>
+
+      <div class="success-box" id="successBox">
+        <div class="success-icon">✓</div>
+        <h3>Candidatura Enviada!</h3>
+        <p>Nossa equipe irá analisar e você receberá retorno via Discord em até <strong>48 horas</strong>.</p>
+        <button class="reset-btn" onclick="resetForm()">Enviar outra candidatura</button>
+      </div>
+
+      <form id="mainForm" onsubmit="handleSubmit(event)">
+        <div class="field">
+          <label>Nome Real <span class="req">*</span></label>
+          <input type="text" id="nome" placeholder="Seu nome real" required />
+        </div>
+        <div class="field">
+          <label>Discord <span class="req">*</span></label>
+          <input type="text" id="discord" placeholder="usuario ou @usuario" required />
+        </div>
+        <div class="field">
+          <label>Idade <span class="req">*</span></label>
+          <input type="number" id="idade" placeholder="Sua idade" min="16" required />
+        </div>
+        <div class="field">
+          <label>Nome do Personagem <span class="req">*</span></label>
+          <input type="text" id="personagem" placeholder="Como seu personagem será chamado" required />
+        </div>
+        <div class="field">
+          <label>História do Personagem <span class="req">*</span></label>
+          <textarea id="historia" rows="5" placeholder="Conte a origem e motivação do seu personagem (mín. 100 caracteres)..." required minlength="100"></textarea>
+        </div>
+        <div class="field">
+          <label>Experiência com Roleplay <span class="req">*</span></label>
+          <textarea id="experiencia" rows="5" placeholder="Já participou de outros servidores? Qual seu nível?" required></textarea>
+        </div>
+        <div class="field">
+          <label>Por que você deve entrar? <span class="req">*</span></label>
+          <textarea id="motivacao" rows="5" placeholder="Nos convença por que você merece uma vaga..." required></textarea>
+        </div>
+        <div class="field">
+          <label>Chatlog da Cena — Interpretação <span class="req">*</span></label>
+          <div class="chatlog-block">
+            <div class="scene-wrap">
+              <img src="/scene.png" alt="Cena para interpretar" />
+              <div class="scene-overlay"><span>📷 Interprete esta cena em chatlog</span></div>
+            </div>
+            <div class="legend">
+              <div class="leg-item"><span class="leg-badge" style="color:#fff;border-color:#fff4;background:#fff1">—</span><span class="leg-label">fala normal</span></div>
+              <div class="leg-item"><span class="leg-badge" style="color:#c084fc;border-color:#c084fc55;background:#c084fc15">*</span><span class="leg-label">/me e /do</span></div>
+              <div class="leg-item"><span class="leg-badge" style="color:#94a3b8;border-color:#94a3b855;background:#94a3b815">((</span><span class="leg-label">OOC</span></div>
+              <div class="leg-item"><span class="leg-badge" style="color:#7dd3fc;border-color:#7dd3fc55;background:#7dd3fc15">#</span><span class="leg-label">ligação</span></div>
+              <div class="leg-item"><span class="leg-badge" style="color:#f87171;border-color:#f8717155;background:#f8717115">!</span><span class="leg-label">sistema</span></div>
+            </div>
+            <textarea class="chatlog-ta" id="chatlog" rows="10" placeholder="Interprete a cena usando:
+— fala normal
+* ação /me ou /do
+(( OOC ))
+# ligação celular
+! sistema" required minlength="80"></textarea>
+          </div>
+        </div>
+
+        <div class="error-box" id="errorBox"></div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <span id="btnText">ENVIAR CANDIDATURA</span>
+          <span class="loader" id="loader"></span>
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <footer>
+    <p>© <span id="year"></span> Chicago Roleplay · Todos os direitos reservados</p>
+    <p class="footer-mono">FiveM · Roleplay Sério · Brasil</p>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    async function handleSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('submitBtn');
+      const loader = document.getElementById('loader');
+      const btnText = document.getElementById('btnText');
+      const errorBox = document.getElementById('errorBox');
+
+      btn.disabled = true;
+      loader.style.display = 'inline-block';
+      btnText.style.display = 'none';
+      errorBox.classList.remove('show');
+
+      const body = {
+        nome:        document.getElementById('nome').value,
+        discord:     document.getElementById('discord').value,
+        idade:       document.getElementById('idade').value,
+        personagem:  document.getElementById('personagem').value,
+        historia:    document.getElementById('historia').value,
+        experiencia: document.getElementById('experiencia').value,
+        motivacao:   document.getElementById('motivacao').value,
+        chatlog:     document.getElementById('chatlog').value,
+      };
+
+      try {
+        const res = await fetch('/api/apply', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Erro ao enviar.');
+        document.getElementById('mainForm').style.display = 'none';
+        document.getElementById('successBox').classList.add('show');
+      } catch (err) {
+        errorBox.textContent = '⚠ ' + err.message;
+        errorBox.classList.add('show');
+        btn.disabled = false;
+        loader.style.display = 'none';
+        btnText.style.display = 'inline';
+      }
+    }
+
+    function resetForm() {
+      document.getElementById('mainForm').reset();
+      document.getElementById('mainForm').style.display = 'flex';
+      document.getElementById('successBox').classList.remove('show');
+      document.getElementById('submitBtn').disabled = false;
+      document.getElementById('loader').style.display = 'none';
+      document.getElementById('btnText').style.display = 'inline';
+    }
+  </script>
+</body>
+</html>
