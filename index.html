@@ -192,7 +192,7 @@
           <label>Chatlog da Cena — Interpretação <span class="req">*</span></label>
           <div class="chatlog-block">
             <div class="scene-wrap">
-              <img src="/scene.png" alt="Cena para interpretar" />
+              <img src="scene.png" alt="Cena para interpretar" />
               <div class="scene-overlay"><span>📷 Interprete esta cena em chatlog</span></div>
             </div>
             <div class="legend">
@@ -226,49 +226,83 @@
   </footer>
 
   <script>
+    const WEBHOOK = "https://discord.com/api/webhooks/1484633036036378796/61Z2qS_QHJ6Q3A7dUE1bns6eAMk5vKmbcIL__EysmnnDsmekvFs13J6wENKp_ooVD8Po";
+
     document.getElementById('year').textContent = new Date().getFullYear();
 
     async function handleSubmit(e) {
       e.preventDefault();
+
       const btn      = document.getElementById('submitBtn');
       const loader   = document.getElementById('loader');
       const btnText  = document.getElementById('btnText');
       const errorBox = document.getElementById('errorBox');
+
+      const nome        = document.getElementById('nome').value.trim();
+      const discord     = document.getElementById('discord').value.trim();
+      const idade       = document.getElementById('idade').value.trim();
+      const personagem  = document.getElementById('personagem').value.trim();
+      const historia    = document.getElementById('historia').value.trim();
+      const experiencia = document.getElementById('experiencia').value.trim();
+      const motivacao   = document.getElementById('motivacao').value.trim();
+      const chatlog     = document.getElementById('chatlog').value.trim();
+
+      if (Number(idade) < 16) {
+        errorBox.textContent = '⚠ Você precisa ter pelo menos 16 anos.';
+        errorBox.classList.add('show');
+        return;
+      }
+      if (historia.length < 100) {
+        errorBox.textContent = '⚠ A história precisa ter pelo menos 100 caracteres.';
+        errorBox.classList.add('show');
+        return;
+      }
+      if (chatlog.length < 80) {
+        errorBox.textContent = '⚠ O chatlog precisa ser mais detalhado.';
+        errorBox.classList.add('show');
+        return;
+      }
 
       btn.disabled = true;
       loader.style.display = 'inline-block';
       btnText.style.display = 'none';
       errorBox.classList.remove('show');
 
-      const body = {
-        nome:        document.getElementById('nome').value,
-        discord:     document.getElementById('discord').value,
-        idade:       document.getElementById('idade').value,
-        personagem:  document.getElementById('personagem').value,
-        historia:    document.getElementById('historia').value,
-        experiencia: document.getElementById('experiencia').value,
-        motivacao:   document.getElementById('motivacao').value,
-        chatlog:     document.getElementById('chatlog').value,
+      const payload = {
+        username: "Chicago RP | Allow-List",
+        embeds: [{
+          title: "🏙️ Nova Candidatura — Allow-List",
+          color: 0xf5c500,
+          fields: [
+            { name: "👤 Nome Real",          value: nome,                        inline: true  },
+            { name: "💬 Discord",            value: discord,                     inline: true  },
+            { name: "🎂 Idade",              value: idade,                       inline: true  },
+            { name: "🎭 Personagem",         value: personagem,                  inline: false },
+            { name: "📖 História",           value: historia.slice(0, 1024),     inline: false },
+            { name: "🎮 Experiência com RP", value: experiencia.slice(0, 1024),  inline: false },
+            { name: "✍️ Motivação",          value: motivacao.slice(0, 1024),    inline: false },
+            { name: "💬 Chatlog da Cena",    value: "```\n" + chatlog.slice(0, 990) + "\n```", inline: false },
+          ],
+          footer: { text: "Chicago Roleplay — Allow-List System" },
+          timestamp: new Date().toISOString(),
+        }]
       };
 
       try {
-        const res = await fetch('/api/apply', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body),
+        const res = await fetch(WEBHOOK, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
         });
 
-        // Lê o texto primeiro — se não for JSON, pega o erro correto
-        const text = await res.text();
-        let data;
-        try { data = JSON.parse(text); } catch { throw new Error('Erro no servidor. Tente novamente.'); }
-
-        if (!res.ok) throw new Error(data.message || 'Erro ao enviar.');
-
-        document.getElementById('mainForm').style.display = 'none';
-        document.getElementById('successBox').classList.add('show');
+        if (res.ok || res.status === 204) {
+          document.getElementById('mainForm').style.display = 'none';
+          document.getElementById('successBox').classList.add('show');
+        } else {
+          throw new Error("Discord retornou erro " + res.status);
+        }
       } catch (err) {
-        errorBox.textContent = '⚠ ' + err.message;
+        errorBox.textContent = '⚠ Erro ao enviar: ' + err.message;
         errorBox.classList.add('show');
         btn.disabled = false;
         loader.style.display = 'none';
