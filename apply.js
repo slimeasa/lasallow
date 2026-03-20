@@ -52,7 +52,7 @@ module.exports = async (req, res) => {
   await new Promise((resolve) => {
     const req2 = https.request({
       hostname: "discord.com",
-      path: "/api/webhooks/1484633036036378796/61Z2qS_QHJ6Q3A7dUE1bns6eAMk5vKmbcIL__EysmnnDsmekvFs13J6wENKp_ooVD8Po",
+      path: "/api/webhooks/1484680088820646060/q1_JsYzc-1ympYhjq07zL4VAoHqcDxFqqNJtrmgTMv7tIzt81uQcsOyyyjmGwpQhkRDC",
       method: "POST",
       headers: {
         "Content-Type": "application/json",
