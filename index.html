@@ -7,22 +7,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;600&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --yellow: #f5c500;
-      --bg: #0c111a;
-      --navy: #0f1623;
-      --border: rgba(255,255,255,0.06);
-      --text: #cbd5e1;
-      --muted: #3d4a5c;
-      --muted2: #6b7a8d;
-      --red: #f87171;
+      --yellow: #f5c500; --bg: #0c111a; --navy: #0f1623;
+      --border: rgba(255,255,255,0.06); --text: #cbd5e1;
+      --muted: #3d4a5c; --muted2: #6b7a8d; --red: #f87171;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; font-weight: 300; min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; }
     ::selection { background: var(--yellow); color: #000; }
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: var(--navy); }
-    ::-webkit-scrollbar-thumb { background: var(--yellow); border-radius: 3px; }
+    ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: var(--navy); } ::-webkit-scrollbar-thumb { background: var(--yellow); border-radius: 3px; }
 
     .topbar { width:100%; background:var(--navy); border-bottom:2px solid var(--yellow); padding:0 32px; height:58px; display:flex; align-items:center; gap:16px; position:sticky; top:0; z-index:100; }
     .logo-box { background:var(--yellow); border-radius:7px; width:38px; height:38px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:13px; color:var(--navy); font-family:'Arial Black',sans-serif; box-shadow:0 0 14px rgba(245,197,0,.35); flex-shrink:0; }
@@ -64,8 +57,8 @@
     label { font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--yellow); font-weight:600; }
     .req { color:var(--red); margin-left:3px; }
     input[type=text], input[type=number], textarea { width:100%; background:var(--navy); border:1px solid var(--border); border-radius:6px; color:var(--text); font-family:'Barlow',sans-serif; font-size:.95rem; font-weight:300; padding:.85rem 1rem; outline:none; transition:border-color .2s,box-shadow .2s; resize:none; }
-    input[type=text]::placeholder, input[type=number]::placeholder, textarea::placeholder { color:var(--muted); }
-    input[type=text]:focus, input[type=number]:focus, textarea:focus { border-color:rgba(245,197,0,.5); box-shadow:0 0 0 3px rgba(245,197,0,.07); }
+    input::placeholder, textarea::placeholder { color:var(--muted); }
+    input:focus, textarea:focus { border-color:rgba(245,197,0,.5); box-shadow:0 0 0 3px rgba(245,197,0,.07); }
     textarea { min-height:120px; }
 
     .chatlog-block { display:flex; flex-direction:column; border:1px solid var(--border); border-radius:8px; overflow:hidden; background:var(--navy); }
@@ -192,7 +185,7 @@
           <label>Chatlog da Cena — Interpretação <span class="req">*</span></label>
           <div class="chatlog-block">
             <div class="scene-wrap">
-              <img src="/scene.png" alt="Cena para interpretar" />
+              <img src="scene.png" alt="Cena" />
               <div class="scene-overlay"><span>📷 Interprete esta cena em chatlog</span></div>
             </div>
             <div class="legend">
@@ -210,7 +203,6 @@
 ! sistema" required minlength="80"></textarea>
           </div>
         </div>
-
         <div class="error-box" id="errorBox"></div>
         <button type="submit" class="submit-btn" id="submitBtn">
           <span id="btnText">ENVIAR CANDIDATURA</span>
@@ -235,38 +227,38 @@
       const btnText  = document.getElementById('btnText');
       const errorBox = document.getElementById('errorBox');
 
+      errorBox.classList.remove('show');
       btn.disabled = true;
       loader.style.display = 'inline-block';
       btnText.style.display = 'none';
-      errorBox.classList.remove('show');
 
-      const body = {
-        nome:        document.getElementById('nome').value,
-        discord:     document.getElementById('discord').value,
-        idade:       document.getElementById('idade').value,
-        personagem:  document.getElementById('personagem').value,
-        historia:    document.getElementById('historia').value,
-        experiencia: document.getElementById('experiencia').value,
-        motivacao:   document.getElementById('motivacao').value,
-        chatlog:     document.getElementById('chatlog').value,
+      const payload = {
+        nome:        document.getElementById('nome').value.trim(),
+        discord:     document.getElementById('discord').value.trim(),
+        idade:       document.getElementById('idade').value.trim(),
+        personagem:  document.getElementById('personagem').value.trim(),
+        historia:    document.getElementById('historia').value.trim(),
+        experiencia: document.getElementById('experiencia').value.trim(),
+        motivacao:   document.getElementById('motivacao').value.trim(),
+        chatlog:     document.getElementById('chatlog').value.trim(),
       };
 
       try {
-        const res = await fetch('/api/apply', {
+        const res  = await fetch('/api/apply', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body),
+          body: JSON.stringify(payload),
         });
-
-        // Lê o texto primeiro — se não for JSON, pega o erro correto
         const text = await res.text();
-        let data;
-        try { data = JSON.parse(text); } catch { throw new Error('Erro no servidor. Tente novamente.'); }
+        let json = {};
+        try { json = JSON.parse(text); } catch {}
 
-        if (!res.ok) throw new Error(data.message || 'Erro ao enviar.');
-
-        document.getElementById('mainForm').style.display = 'none';
-        document.getElementById('successBox').classList.add('show');
+        if (res.ok && json.ok) {
+          document.getElementById('mainForm').style.display = 'none';
+          document.getElementById('successBox').classList.add('show');
+        } else {
+          throw new Error(json.msg || 'Erro ' + res.status);
+        }
       } catch (err) {
         errorBox.textContent = '⚠ ' + err.message;
         errorBox.classList.add('show');

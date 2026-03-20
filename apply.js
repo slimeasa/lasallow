@@ -1,69 +1,71 @@
 const https = require("https");
 
-const WH_HOST = "discord.com";
-const WH_PATH = "/api/webhooks/1484635790872019114/dRRIxOMMZN-qUdvzc2gPuGacVvjCCR-_e-TC6yPBKtouKsn9uALFefzNzR3iI9VRSbVS";
-
-function postToDiscord(payload) {
-  return new Promise((resolve, reject) => {
-    const body = JSON.stringify(payload);
-    const req = https.request(
-      { hostname: WH_HOST, path: WH_PATH, method: "POST", headers: { "Content-Type": "application/json", "Content-Length": Buffer.byteLength(body) } },
-      (res) => {
-        let data = "";
-        res.on("data", (c) => (data += c));
-        res.on("end", () => resolve({ status: res.statusCode, body: data }));
-      }
-    );
-    req.on("error", reject);
-    req.write(body);
-    req.end();
-  });
-}
-
-module.exports = async function (req, res) {
+module.exports = async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   res.setHeader("Content-Type", "application/json");
 
-  if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST") return res.status(405).end(JSON.stringify({ message: "Método não permitido." }));
+  if (req.method === "OPTIONS") {
+    res.status(200).end("{}");
+    return;
+  }
 
-  const { nome, discord, idade, personagem, historia, experiencia, motivacao, chatlog } = req.body || {};
+  if (req.method !== "POST") {
+    res.status(405).end(JSON.stringify({ ok: false, msg: "Metodo nao permitido" }));
+    return;
+  }
 
-  if (!nome || !discord || !idade || !personagem || !historia || !experiencia || !motivacao || !chatlog)
-    return res.status(400).end(JSON.stringify({ message: "Preencha todos os campos obrigatórios." }));
-  if (Number(idade) < 16)
-    return res.status(400).end(JSON.stringify({ message: "Você precisa ter pelo menos 16 anos." }));
-  if (historia.length < 100)
-    return res.status(400).end(JSON.stringify({ message: "A história precisa ter pelo menos 100 caracteres." }));
-  if (chatlog.length < 80)
-    return res.status(400).end(JSON.stringify({ message: "O chatlog precisa ser mais detalhado." }));
+  // Pega o body — funciona com ou sem parse automático do Vercel
+  let data = req.body;
+  if (typeof data === "string") {
+    try { data = JSON.parse(data); } catch { data = {}; }
+  }
+  if (!data) data = {};
+
+  const { nome, discord, idade, personagem, historia, experiencia, motivacao, chatlog } = data;
+
+  if (!nome || !discord || !idade || !personagem || !historia || !experiencia || !motivacao || !chatlog) {
+    res.status(400).end(JSON.stringify({ ok: false, msg: "Preencha todos os campos." }));
+    return;
+  }
 
   const embed = {
-    title: "🏙️ Nova Candidatura — Allow-List",
-    color: 0xf5c500,
+    title: "Nova Candidatura — Allow-List",
+    color: 16042240,
     fields: [
-      { name: "👤 Nome Real",          value: nome,                      inline: true  },
-      { name: "💬 Discord",            value: discord,                   inline: true  },
-      { name: "🎂 Idade",              value: String(idade),             inline: true  },
-      { name: "🎭 Personagem",         value: personagem,                inline: false },
-      { name: "📖 História",           value: historia.slice(0, 1024),   inline: false },
-      { name: "🎮 Experiência com RP", value: experiencia.slice(0, 1024),inline: false },
-      { name: "✍️ Motivação",          value: motivacao.slice(0, 1024),  inline: false },
-      { name: "💬 Chatlog da Cena",    value: "```\n" + chatlog.slice(0, 990) + "\n```", inline: false },
+      { name: "Nome Real",   value: String(nome),    inline: true },
+      { name: "Discord",     value: String(discord), inline: true },
+      { name: "Idade",       value: String(idade),   inline: true },
+      { name: "Personagem",  value: String(personagem) },
+      { name: "Historia",    value: String(historia).slice(0, 1024) },
+      { name: "Experiencia", value: String(experiencia).slice(0, 1024) },
+      { name: "Motivacao",   value: String(motivacao).slice(0, 1024) },
+      { name: "Chatlog",     value: "```\n" + String(chatlog).slice(0, 990) + "\n```" },
     ],
-    footer: { text: "Chicago Roleplay — Allow-List System" },
+    footer: { text: "Chicago Roleplay — Allow-List" },
     timestamp: new Date().toISOString(),
   };
 
-  try {
-    const r = await postToDiscord({ username: "Chicago RP | Allow-List", embeds: [embed] });
-    if (r.status >= 400) {
-      return res.status(500).end(JSON.stringify({ message: "Erro ao enviar para o Discord. Código: " + r.status }));
-    }
-    return res.status(200).end(JSON.stringify({ message: "Candidatura enviada!" }));
-  } catch (err) {
-    return res.status(500).end(JSON.stringify({ message: "Erro interno: " + err.message }));
-  }
+  const body = JSON.stringify({ username: "Chicago RP", embeds: [embed] });
+
+  await new Promise((resolve) => {
+    const req2 = https.request({
+      hostname: "discord.com",
+      path: "/api/webhooks/1484633036036378796/61Z2qS_QHJ6Q3A7dUE1bns6eAMk5vKmbcIL__EysmnnDsmekvFs13J6wENKp_ooVD8Po",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Length": Buffer.byteLength(body),
+      },
+    }, (r) => {
+      r.on("data", () => {});
+      r.on("end", resolve);
+    });
+    req2.on("error", resolve);
+    req2.write(body);
+    req2.end();
+  });
+
+  res.status(200).end(JSON.stringify({ ok: true, msg: "Candidatura enviada!" }));
 };
