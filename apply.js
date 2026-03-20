@@ -1,7 +1,7 @@
 const https = require("https");
 
 const WH_HOST = "discord.com";
-const WH_PATH = "/api/webhooks/1484643545922015259/1w34CcTtsa9xnCmjivs4R2p5pxYtbm9Gsswcy6NXyqMXJXFNXdeqOJg-gKp2B36_d1Rs";
+const WH_PATH = "/api/webhooks/1484635790872019114/dRRIxOMMZN-qUdvzc2gPuGacVvjCCR-_e-TC6yPBKtouKsn9uALFefzNzR3iI9VRSbVS";
 
 function postToDiscord(payload) {
   return new Promise((resolve, reject) => {
